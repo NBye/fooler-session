@@ -1,0 +1,26 @@
+{
+  "name": "fooler-session",
+  "version": "1.0.0",
+  "description": "redis session for fooler",
+  "main": "src/fooler-session.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NBye/fooler-session.git"
+  },
+  "keywords": [
+    "fooler",
+    "session"
+  ],
+  "author": "NBye",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NBye/fooler-session/issues"
+  },
+  "homepage": "https://github.com/NBye/fooler-session#readme",
+  "dependencies": {
+    "fooler-redis": "^1.0.0"
+  }
+}
