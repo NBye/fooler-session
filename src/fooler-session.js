@@ -1,5 +1,6 @@
 const ObjectId = require('./ObjectId');
 const Redis = require('fooler-redis');
+const session_key = 'fooler_session_id';
 
 const getData = function (data, key) {
     key && key.split('.').forEach(k => {
@@ -34,7 +35,7 @@ class Session {
         let redis = await this.db();
         this.data || await this.get();
         setData(this.data, key, value);
-        redis.set(this.session_id, JSON.stringify(this.data)).then(() => {
+        await redis.set(this.session_id, JSON.stringify(this.data)).then(() => {
             redis.expire(this.session_id, 3600 * 4);
         });
     }
@@ -45,20 +46,19 @@ class Session {
         return getData(this.data, key);
     }
     async db() {
-        return Redis.connect(this.options);
+        return await Redis.connect(this.options);
     }
 }
-module.exports = async function ({ ctx, conf }) {
-    let session_id = ctx.cookie.get('token');
+module.exports = async function ({ ctx, options }) {
+    let session_id = ctx.cookie.get(session_key);
     if (!session_id) {
-        session_id = ObjectId().toString();
+        session_id = 'session_' + ObjectId().toString();
     }
     //每次请求都延长session 时间
-    ctx.cookie.set('token', session_id, {
+    ctx.cookie.set(session_key, session_id, {
         'max-age': 3600 * 4,
     });
-    ctx.session = new Session(session_id, conf.session);
-
+    ctx.session = new Session(session_id, options.session);
     //测试sesion计数器
     // let aaa = await ctx.session.get('aaa');
     // console.log('session aaa:', aaa);
